@@ -9,6 +9,19 @@
   "homepage": "https://www.freakycoder.com",
   "bugs": "https://github.com/WrathChaos/react-native-horizontal-picker-2/issues",
   "keywords": [
+    "horizontal-picker",
+    "picker",
+    "picker-2",
+    "horizontal-picker-2",
+    "horizontal-scroller",
+    "scroll",
+    "scroller",
+    "reanimated",
+    "reanimated-2",
+    "gesture",
+    "gesture-handler",
+    "animation",
+    "select",
     "FreakyCoder",
     "freakycoder",
     "kuray",
@@ -19,9 +32,10 @@
     "ui-lib",
     "rn"
   ],
-  "peerDependencies": {
-    "react": ">= 16.x.x",
-    "react-native": ">=0.63.x"
+  "dependencies": {
+    "react-native-gesture-handler": ">= 2.7.1",
+    "react-native-reanimated": ">= 2.11.0",
+    "react-native-redash": ">= 18.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
@@ -31,7 +45,7 @@
     "@types/react-native": "^0.63.25",
     "eslint": "^7.11.0",
     "eslint-config-airbnb": "^18.2.0",
-    "husky": "^7.0.0",
+    "husky": "^8.0.0",
     "lint-staged": "^10.4.2",
     "npm-post-install": "0.0.2",
     "prettier": "^2.1.2",

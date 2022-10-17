@@ -19,14 +19,14 @@ const App: React.FC = () => {
         />
         <View
           style={{
-            marginTop: 32,
+            marginTop: 120,
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Text
-            style={{ fontWeight: "bold" }}
-          >{`Selection: ${valueSelection}`}</Text>
+          <Text style={{ fontSize: 52, fontWeight: "bold" }}>
+            {valueSelection}
+          </Text>
         </View>
       </Animated.View>
     </GestureHandlerRootView>
