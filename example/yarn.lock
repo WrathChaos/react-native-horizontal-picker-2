@@ -5807,7 +5807,7 @@
     "jscodeshift" "^0.13.1"
     "nullthrows" "^1.1.1"
 
-"react-native-gesture-handler@*", "react-native-gesture-handler@^2.7.1":
+"react-native-gesture-handler@*", "react-native-gesture-handler@^2.7.1", "react-native-gesture-handler@>= 2.7.1":
   "integrity" "sha512-Rnak7U4v3ZB+vjVghv5CvAGS+UfRLsXUq7Nq+FycloxZ7jUZjBo+7rPnt+EdTIE2zc2pKhQHIQKcD+IAPg2Scg=="
   "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.7.1.tgz"
   "version" "2.7.1"
@@ -5823,7 +5823,16 @@
   "resolved" "https://registry.npmjs.org/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.3.tgz"
   "version" "0.70.3"
 
-"react-native-reanimated@^2.11.0", "react-native-reanimated@>=2.0.0":
+"react-native-horizontal-picker-2@^0.1.1":
+  "integrity" "sha512-UWOpi4LtKt7btLM/TRkKZ0TLCrShPVsVV7K7M7264SpMUXUBYPeEH4OPW97sjOMJKc6FoRVKsaR43TaU1QRr0A=="
+  "resolved" "https://registry.npmjs.org/react-native-horizontal-picker-2/-/react-native-horizontal-picker-2-0.1.1.tgz"
+  "version" "0.1.1"
+  dependencies:
+    "react-native-gesture-handler" ">= 2.7.1"
+    "react-native-reanimated" ">= 2.11.0"
+    "react-native-redash" ">= 18.1.0"
+
+"react-native-reanimated@^2.11.0", "react-native-reanimated@>= 2.11.0", "react-native-reanimated@>=2.0.0":
   "integrity" "sha512-/QnujrXSNyXasv7v8K3eu5Z4XGRYMPRa0+x0RjNr6Z5/KEuPHwrg1Xm7UZ2YSm6jCF2b1BW6ceqP/1d626gvhQ=="
   "resolved" "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-2.11.0.tgz"
   "version" "2.11.0"
@@ -5836,7 +5845,7 @@
     "setimmediate" "^1.0.5"
     "string-hash-64" "^1.0.3"
 
-"react-native-redash@^18.1.0":
+"react-native-redash@^18.1.0", "react-native-redash@>= 18.1.0":
   "integrity" "sha512-bdCFl/ZB7Rf2raIlU6SLV+Dc/rL6UXsQNjEVwTGBukHMeSKp1zs4zVtWaGimbN8P22N4qYvb9Jmw/K94ZWYG0Q=="
   "resolved" "https://registry.npmjs.org/react-native-redash/-/react-native-redash-18.1.0.tgz"
   "version" "18.1.0"

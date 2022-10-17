@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, Animated } from "react-native";
-import HorizontalPicker from "./lib/HorizontalPicker";
+import HorizontalPicker from "react-native-horizontal-picker-2";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const App: React.FC = () => {
