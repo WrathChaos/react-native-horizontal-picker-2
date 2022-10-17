@@ -35,7 +35,9 @@ import HorizontalPicker from "react-native-horizontal-picker-2";
 
 ## Fundamental Usage
 
-```jsx
+- Coming Soon
+
+<!-- ```jsx
 <HorizontalPicker
   style={{ flex: 0, height: 75 }}
   data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}
@@ -44,7 +46,7 @@ import HorizontalPicker from "react-native-horizontal-picker-2";
     setValueSelection(val);
   }}
 />
-```
+``` -->
 
 ## Example Project 😍
 
@@ -59,6 +61,9 @@ should work of the example project.
 
 # Configuration - Props
 
+- Coming Soon
+<!--
+
 ## Fundamentals
 
 | Property |   Type   |  Default  | Description                                          |
@@ -70,7 +75,7 @@ should work of the example project.
 
 | Property |   Type    | Default | Description                                             |
 | -------- | :-------: | :-----: | ------------------------------------------------------- |
-| style    | ViewStyle | default | set or override the style object for the main container |
+| style    | ViewStyle | default | set or override the style object for the main container | --> |
 
 ## Future Plans
 
