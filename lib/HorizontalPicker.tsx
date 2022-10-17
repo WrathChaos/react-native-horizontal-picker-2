@@ -1,101 +1,236 @@
-import React, { useState } from "react";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import React, { ReactNode, useState } from "react";
 import {
-  PanGestureHandler,
-  PanGestureHandlerGestureEvent,
-} from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedGestureHandler,
-  useSharedValue,
-  withSpring,
-  runOnJS,
-} from "react-native-reanimated";
-import { snapPoint } from "react-native-redash";
+  View,
+  Text,
+  ScrollViewProps,
+  TouchableWithoutFeedback,
+  LayoutChangeEvent,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  Animated,
+  Platform,
+} from "react-native";
 
-import Item, { ITEM_WIDTH } from "./Item";
-
-export interface HorizontalPickerProps {
+export interface Props extends ScrollViewProps {
   data: any[];
-  style?: StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>>;
-  onChange: (item: any, index: number) => void;
+  renderItem: (item: any, index: number) => ReactNode;
+  itemWidth: number;
+  initialIndex?: number;
+  onChange?: (position: number) => void;
+  mark?: ReactNode | null;
+  interpolateScale?: (
+    index: number,
+    itemWidth: number,
+  ) => Animated.InterpolationConfigType;
+  interpolateOpacity?: (
+    index: number,
+    itemWidth: number,
+  ) => Animated.InterpolationConfigType;
+  style?: object;
+  passToFlatList?: object;
 }
 
-const HorizontalPicker: React.FC<HorizontalPickerProps> = ({
-  data,
-  style,
-  onChange,
-}) => {
-  const snapPoints = data.map((_, i) => (-i + 1) * ITEM_WIDTH);
-  const [dataSelection, setDataSelection] = useState({
-    previous: data[0]!,
-    current: data[0]!,
-    position: { x: 0, y: 0 },
-  });
-  const translateX = useSharedValue(0);
-  const onGestureEvent = useAnimatedGestureHandler<
-    PanGestureHandlerGestureEvent,
-    { x: number }
-  >({
-    onStart: (_, ctx) => {
-      ctx.x = translateX.value;
-    },
-    onActive: ({ translationX }, { x }) => {
-      translateX.value = x + translationX;
-    },
-    onEnd: ({ velocityX }) => {
-      const dest = snapPoint(translateX.value, velocityX, snapPoints);
+export default (props: Props) => {
+  const {
+    data,
+    renderItem,
+    itemWidth,
+    style = {},
+    passToFlatList = {},
+    onChange,
+    ...passedProps
+  } = props;
 
-      const selectedIndex = snapPoints.findIndex((item) => item === dest);
-      const selectedVal = data[selectedIndex];
+  const scrollX = React.useRef(new Animated.Value(0)).current;
+  let fixed = React.useRef(false).current;
+  let timeoutFixPosition = React.useRef(setTimeout(() => {}, 0)).current;
+  const flatListRef = React.useRef(null);
+  let [paddingSide, setPaddingSide] = useState(0);
 
-      translateX.value = withSpring(dest);
-      runOnJS(onChange)(selectedVal, selectedIndex);
+  const onLayoutScrollView = (e: LayoutChangeEvent) => {
+    const { width } = e.nativeEvent.layout;
+    const { itemWidth, onLayout, initialIndex } = props;
+    setPaddingSide((width - itemWidth) / 2);
+
+    if (onLayout != null) {
+      onLayout(e);
+    }
+    if (initialIndex) {
+      if (flatListRef && flatListRef.current) {
+        // @ts-ignore
+        flatListRef.current.scrollToIndex({
+          animated: false,
+          index: "" + initialIndex,
+        });
+      }
+    }
+  };
+
+  const onMomentumScrollBegin = () => {
+    fixed = false;
+    clearTimeout(timeoutFixPosition);
+  };
+
+  const onMomentumScrollEnd = ({
+    nativeEvent: {
+      contentOffset: { x },
     },
-  });
+  }: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const selected = Math.round(x / itemWidth);
+    changePosition(selected);
+  };
 
-  const handlePress = (
-    position: { x: number; y: number },
-    item: any,
-    index: number,
-  ) => {
-    translateX.value = withSpring((-index + 1) * ITEM_WIDTH);
-    setDataSelection({
-      position,
-      previous: dataSelection.current,
-      current: item,
-    });
-    onChange?.(item, index);
+  const onScrollBeginDrag = () => {
+    fixed = false;
+    clearTimeout(timeoutFixPosition);
+  };
+
+  const onScrollEndDrag = () => {
+    clearTimeout(timeoutFixPosition);
+  };
+
+  const changePosition = (position: number) => {
+    let fixedPosition = position;
+    if (position < 0) {
+      fixedPosition = 0;
+    }
+    if (position > data.length - 1) {
+      fixedPosition = data.length - 1;
+    }
+
+    if (onChange) {
+      onChange(fixedPosition);
+    }
+    clearTimeout(timeoutFixPosition);
+    timeoutFixPosition = setTimeout(
+      function () {
+        if (!fixed && flatListRef && flatListRef.current) {
+          fixed = true;
+          // @ts-ignore
+          flatListRef.current.scrollToIndex({
+            animated: true,
+            index: "" + fixedPosition,
+          });
+        }
+      },
+      Platform.OS == "ios" ? 50 : 0,
+    );
   };
 
   return (
-    <PanGestureHandler onGestureEvent={onGestureEvent}>
-      <Animated.View style={[styles.container, style]}>
-        <View style={styles.placeholder} />
-        {data.map((item, index) => (
-          <Item
-            data={item}
-            key={index}
-            index={index}
-            translateX={translateX}
-            onPress={(position: { x: number; y: number }) =>
-              handlePress(position, item, index)
-            }
-          />
-        ))}
-      </Animated.View>
-    </PanGestureHandler>
+    <View
+      style={{ display: "flex", height: "100%", ...style }}
+      {...passedProps}
+    >
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {typeof props.mark === "undefined" ? DefaultMark : props.mark}
+      </View>
+      <Animated.FlatList
+        ref={process.env.NODE_ENV === "test" ? null : flatListRef}
+        onLayout={onLayoutScrollView}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: true },
+        )}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        data={data}
+        keyExtractor={(_item, index) => index.toString()}
+        onMomentumScrollBegin={onMomentumScrollBegin}
+        onMomentumScrollEnd={onMomentumScrollEnd}
+        onScrollBeginDrag={onScrollBeginDrag}
+        onScrollEndDrag={onScrollEndDrag}
+        contentContainerStyle={{
+          paddingHorizontal: paddingSide,
+          display: "flex",
+          alignItems: "center",
+          backgroundColor: "transparent",
+        }}
+        initialNumToRender={30}
+        {...passToFlatList}
+        renderItem={({ item, index }) => {
+          const { itemWidth, interpolateScale, interpolateOpacity } = props;
+
+          const scale = scrollX.interpolate(
+            interpolateScale
+              ? interpolateScale(index, itemWidth)
+              : defaultScaleConfig(index, itemWidth),
+          );
+
+          const opacity = scrollX.interpolate(
+            interpolateOpacity
+              ? interpolateOpacity(index, itemWidth)
+              : defaultOpacityConfig(index, itemWidth),
+          );
+
+          return (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                if (flatListRef && flatListRef.current) {
+                  fixed = true;
+                  // @ts-ignore
+                  flatListRef.current.scrollToIndex({
+                    animated: true,
+                    index: "" + index,
+                  });
+                }
+                if (onChange) {
+                  onChange(index);
+                }
+              }}
+              key={index}
+            >
+              <Animated.View style={{ transform: [{ scale }], opacity }}>
+                {renderItem(item, index)}
+              </Animated.View>
+            </TouchableWithoutFeedback>
+          );
+        }}
+      />
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  placeholder: {
-    width: ITEM_WIDTH,
-  },
+const DefaultMark = (
+  <Text
+    style={{
+      color: "black",
+      fontWeight: "bold",
+      paddingTop: 60,
+    }}
+  >
+    ^
+  </Text>
+);
+
+const defaultScaleConfig = (index: number, itemWidth: number) => ({
+  inputRange: [
+    itemWidth * (index - 2),
+    itemWidth * (index - 1),
+    itemWidth * index,
+    itemWidth * (index + 1),
+    itemWidth * (index + 2),
+  ],
+  outputRange: [1, 1.5, 2.2, 1.5, 1],
 });
 
-export default HorizontalPicker;
+const defaultOpacityConfig = (index: number, itemWidth: number) => ({
+  inputRange: [
+    itemWidth * (index - 2),
+    itemWidth * (index - 1),
+    itemWidth * index,
+    itemWidth * (index + 1),
+    itemWidth * (index + 2),
+  ],
+  outputRange: [0.7, 0.9, 1, 0.9, 0.7],
+});

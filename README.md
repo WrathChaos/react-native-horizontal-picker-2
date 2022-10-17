@@ -23,13 +23,7 @@ npm i react-native-horizontal-picker-2
 
 ## Peer Dependencies
 
-<h5><i>IMPORTANT! You need install them</i></h5>
-
-```js
-"react-native-gesture-handler": ">= 2.7.1",
-"react-native-reanimated": ">= 2.11.0",
-"react-native-redash": ">= 18.1.0"
-```
+```Zero Dependency`
 
 # Usage
 
@@ -81,13 +75,15 @@ should work of the example project.
 ## Future Plans
 
 - [x] ~~LICENSE~~
-- [ ] Changable Item Width
-- [ ] More customization options
-- [ ] More `data` usage options
-- [ ] More animation options rather than spring effect
+- [ ] Full Code Refactor
 - [ ] Better example
 - [ ] Cooler GIF
 - [ ] Write an article about the lib on Medium
+
+## Credits
+
+This is a new fork from [React Native Picker Horizontal](https://github.com/andrey-sh/react-native-picker-horizontal)
+Since this is no updated more than 2 years, I will maintain this one :)
 
 ## Author
 

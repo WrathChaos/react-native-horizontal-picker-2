@@ -1,6 +1,6 @@
 {
   "name": "react-native-horizontal-picker-2",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Fully customizable, performant horizontal picker for React Native",
   "main": "./build/dist/HorizontalPicker.js",
   "repository": "git@github.com:WrathChaos/react-native-horizontal-picker-2.git",
